@@ -1,0 +1,96 @@
+#include <TFT_eSPI.h>
+#include <XPT2046_Bitbang.h>
+
+//touchscreen pins
+#define XPT2046_MOSI 32
+#define XPT2046_MISO 39
+#define XPT2046_CLK 25
+#define XPT2046_CS 33
+
+#include "display.h"
+#include "level.h"
+#include "entity.h"
+#include "input.h"
+#include "FriedPreferences.h"
+
+//#define FRIED_SAMPLE_RATE 16000
+#include <FriedMusicPlayer.h>
+
+XPT2046_Bitbang ts(XPT2046_MOSI, XPT2046_MISO, XPT2046_CLK, XPT2046_CS);
+bool pressed = false;
+
+TFT_eSPI tft = TFT_eSPI();
+TFT_eSprite framebuffer = TFT_eSprite(&tft);
+
+Preferences prefs;
+
+unsigned long lastInputTime = 0;
+unsigned long lastDrawTime = 0;
+// unsigned long lastAudioTime = 0;
+
+const unsigned long INPUT_INTERVAL = 6;  // 66 FPS
+const unsigned long DRAW_INTERVAL = 15;   // ~33 FPS
+// const unsigned long AUDIO_INTERVAL = 500; //half a second
+
+void setup() {
+  Serial.begin(115200);
+  ts.begin();
+  tft.init();
+  tft.setRotation(1); // landscape
+  framebuffer.setColorDepth(8);
+  framebuffer.createSprite(320, 240); // full screen sprite
+  tft.fillScreen(TFT_BLACK);
+  tft.setFreeFont(&FreeMono18pt7b);
+  tft.setTextColor(TFT_PURPLE);
+  tft.drawCentreString("Platformer", TFT_WIDTH / 2, 10, 4);
+  
+  prefs = FriedPreferences::init("platformer_game");
+  prefs.getBool("music_paused", false);
+  //for the ones that need it there is a setup
+  setup_audio("/final_countdown.raw");
+  set_audio_volume(0.1f);
+}
+
+void loop() {
+  // if (!musicPaused)
+  // {
+  // }
+    // loop_audio(); //we just make audio handle itself
+
+
+  // TouchPoint tp = ts.getTouch();
+  // if (pressed)
+  // {
+  //   pressed = false;
+  //   musicPaused = !musicPaused;
+  //   prefs.putBool("music_paused", musicPaused);
+  //   if (musicPaused)
+  //   {
+  //     pause_music();
+  //   }
+  // }
+  // else if (tp.zRaw > 0)
+  // {
+  //   pressed = true;
+  // }
+
+  // return;
+  unsigned long now = millis();
+    if (now - lastInputTime >= INPUT_INTERVAL) {
+    lastInputTime = now;
+    loop_input();
+  }
+
+  if (now - lastDrawTime >= DRAW_INTERVAL) {
+    lastDrawTime = now;
+    loop_draw(framebuffer);
+  }
+
+
+  // if (now - lastAudioTime >= AUDIO_INTERVAL) {
+  //   lastAudioTime = now;
+  //   loop_audio();  // You can define this to integrate DacTone or similar
+  // }
+
+  //delay(1);
+}
