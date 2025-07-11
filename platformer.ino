@@ -51,10 +51,10 @@ void setup() {
 
   jump_sound = load_sfx("/jump_effect.raw");
 
-  start_audio("/rickroll.raw");
+  start_audio("/calm.raw");
 
   set_audio_volume(0.1f);
-  set_sfx_volume(0.2f);
+  set_sfx_volume(0.3f);
 }
 
 void loop() {
