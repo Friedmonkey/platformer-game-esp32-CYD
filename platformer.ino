@@ -47,34 +47,31 @@ void setup() {
   prefs = FriedPreferences::init("platformer_game");
   prefs.getBool("music_paused", false);
   //for the ones that need it there is a setup
-  setup_audio("/final_countdown.raw");
+  start_audio("/rickroll.raw");
   set_audio_volume(0.1f);
 }
 
 void loop() {
-  // if (!musicPaused)
-  // {
-  // }
-    // loop_audio(); //we just make audio handle itself
+  TouchPoint tp = ts.getTouch();
+  if (pressed)
+  {
+    pressed = false;
+    musicPaused = !musicPaused;
+    prefs.putBool("music_paused", musicPaused);
+    if (musicPaused)
+    {
+      pause_audio();
+    }
+    else
+    {
+      resume_audio();
+    }
+  }
+  else if (tp.zRaw > 0)
+  {
+    pressed = true;
+  }
 
-
-  // TouchPoint tp = ts.getTouch();
-  // if (pressed)
-  // {
-  //   pressed = false;
-  //   musicPaused = !musicPaused;
-  //   prefs.putBool("music_paused", musicPaused);
-  //   if (musicPaused)
-  //   {
-  //     pause_music();
-  //   }
-  // }
-  // else if (tp.zRaw > 0)
-  // {
-  //   pressed = true;
-  // }
-
-  // return;
   unsigned long now = millis();
     if (now - lastInputTime >= INPUT_INTERVAL) {
     lastInputTime = now;
@@ -85,12 +82,4 @@ void loop() {
     lastDrawTime = now;
     loop_draw(framebuffer);
   }
-
-
-  // if (now - lastAudioTime >= AUDIO_INTERVAL) {
-  //   lastAudioTime = now;
-  //   loop_audio();  // You can define this to integrate DacTone or similar
-  // }
-
-  //delay(1);
 }
