@@ -12,12 +12,14 @@
 #include "entity.h"
 #include "input.h"
 #include "FriedPreferences.h"
+#include "game_objects.h"
 
 //#define FRIED_SAMPLE_RATE 16000
 #include <FriedMusicPlayer.h>
 
 XPT2046_Bitbang ts(XPT2046_MOSI, XPT2046_MISO, XPT2046_CLK, XPT2046_CS);
 bool pressed = false;
+bool musicPaused = false;
 
 TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite framebuffer = TFT_eSprite(&tft);
@@ -45,10 +47,14 @@ void setup() {
   tft.drawCentreString("Platformer", TFT_WIDTH / 2, 10, 4);
   
   prefs = FriedPreferences::init("platformer_game");
-  prefs.getBool("music_paused", false);
-  //for the ones that need it there is a setup
+
+
+  jump_sound = load_sfx("/jump_effect.raw");
+
   start_audio("/rickroll.raw");
+
   set_audio_volume(0.1f);
+  set_sfx_volume(0.2f);
 }
 
 void loop() {
@@ -57,7 +63,6 @@ void loop() {
   {
     pressed = false;
     musicPaused = !musicPaused;
-    prefs.putBool("music_paused", musicPaused);
     if (musicPaused)
     {
       pause_audio();
