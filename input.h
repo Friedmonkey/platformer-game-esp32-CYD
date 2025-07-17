@@ -19,7 +19,14 @@ inline bool is_walkable_pixel(int px, int py) {
   if (tile_x < 0 || tile_x >= MAP_W || tile_y < 0 || tile_y >= MAP_H)
     return false;
 
-  return level[tile_y][tile_x] == '.';
+  char tile = level[tile_y][tile_x];
+
+  if (tile == 'W')
+  {
+    has_won = true;
+  }
+  
+  return (tile == '.' || tile == 'W');
 }
 
 inline bool is_colliding(int x, int y, int w, int h) {

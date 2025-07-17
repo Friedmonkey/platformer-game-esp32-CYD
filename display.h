@@ -10,7 +10,10 @@ const int TILE_SIZE = 16;
 inline void drawTile(TFT_eSprite &spr, char tile, int x, int y) {
   int px = x * TILE_SIZE;
   int py = y * TILE_SIZE;
-  uint16_t color = (tile == '#') ? TFT_GREEN : TFT_SKYBLUE;
+  uint16_t color = TFT_SKYBLUE;
+  if (tile == '#') color = TFT_GREEN; 
+  if (tile == 'W') color = TFT_PURPLE;
+  
   spr.fillRect(px, py, TILE_SIZE, TILE_SIZE, color);
 }
 
